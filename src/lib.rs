@@ -1,3 +1,5 @@
+#![deny(clippy::unwrap_used)]
+#![deny(clippy::expect_used)]
 //! Common Security Advisory Framework (CSAF)
 //!
 //! A lovingly hand-crafted implementation of [CSAF](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=csaf) for Rust. Currently,

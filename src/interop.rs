@@ -1,3 +1,6 @@
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+
 #[cfg(feature = "rustsec-interop")]
 pub mod rustsec {
     use std::convert::TryInto;

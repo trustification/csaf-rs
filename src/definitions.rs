@@ -27,7 +27,7 @@ impl BranchesT {
         if self.0.is_empty() {
             None
         } else {
-            Some(self.0.iter().map(|x| x.try_into().unwrap()).collect())
+            Some(self.0.iter().flat_map(|x| x.try_into().ok()).collect())
         }
     }
 }
