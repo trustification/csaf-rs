@@ -13,16 +13,14 @@
 
 use serde::{Deserialize, Serialize};
 
-pub mod document;
 use document::Document;
-
-pub mod product_tree;
 use product_tree::ProductTree;
-
-pub mod vulnerability;
 use vulnerability::Vulnerability;
 
 pub mod definitions;
+pub mod document;
+pub mod product_tree;
+pub mod vulnerability;
 
 pub mod interop;
 
@@ -40,7 +38,6 @@ pub struct Csaf {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json;
 
     #[test]
     fn generic_template_deserializes() {
@@ -71,26 +68,38 @@ mod tests {
             }
           }"#;
 
-        let document: Csaf = serde_json::from_str(generic).unwrap();
+        let document: Csaf = serde_json_round_trip(generic);
         println!("{:#?}", document);
+    }
+
+    fn serde_json_round_trip(doc_str: &str) -> Csaf {
+        let document: Csaf = serde_json::from_str(doc_str).unwrap();
+        let bytes = serde_json::to_vec_pretty(&document).unwrap();
+        let round_trip_document: Csaf = serde_json::from_slice(bytes.clone().as_slice())
+            .unwrap_or_else(|err| panic!("re-serialized document:\n{}\ndeserialization of re-serialized document failed: {}", String::from_utf8(bytes.clone()).unwrap(), err));
+        assert_eq!(
+            document, round_trip_document,
+            "re-serialized document should be equal to original"
+        );
+        document
     }
 
     #[test]
     fn first_example_deserializes() {
         let example = include_str!("../tests/CVE-2018-0171-modified.json");
-        let document: Csaf = serde_json::from_str(example).unwrap();
+        let document: Csaf = serde_json_round_trip(example);
         println!("{:#?}", document);
     }
     #[test]
     fn second_example_deserializes() {
         let example = include_str!("../tests/cvrf-rhba-2018-0489-modified.json");
-        let document: Csaf = serde_json::from_str(example).unwrap();
+        let document: Csaf = serde_json_round_trip(example);
         println!("{:#?}", document);
     }
     #[test]
     fn third_example_deserializes() {
         let example = include_str!("../tests/rhba-2023_0564.json");
-        let document: Csaf = serde_json::from_str(example).unwrap();
+        let document: Csaf = serde_json_round_trip(example);
         println!("{:#?}", document);
     }
 }
