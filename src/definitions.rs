@@ -86,7 +86,7 @@ pub struct FullProductName {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct ProductIdentificationHelper {
-    #[serde_as(as = "Option<DisplayFromStr>")]
+    #[serde(with = "custom_cpe_format")]
     pub cpe: Option<cpe::uri::OwnedUri>,
     pub hashes: Option<Vec<HashCollection>>,
     pub model_numbers: Option<Vec<String>>, // TODO: No empty strings, enforce unique
@@ -96,6 +96,38 @@ pub struct ProductIdentificationHelper {
     pub serial_numbers: Option<Vec<String>>, // TODO: No empty strings, enforce unique
     pub skus: Option<Vec<String>>,
     pub x_generic_uris: Option<Vec<Url>>,
+}
+
+mod custom_cpe_format {
+    use cpe::uri::OwnedUri;
+    use serde::{self, Deserialize, Deserializer, Serializer};
+    use std::str::FromStr;
+
+    pub fn serialize<S>(value: &Option<OwnedUri>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match value {
+            Some(value) => {
+                let x = format!("{:0}", value);
+                serializer.serialize_str(&x)
+            }
+            None => serializer.serialize_none(),
+        }
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<OwnedUri>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        match Option::<String>::deserialize(deserializer)? {
+            None => Ok(None),
+            Some(s) => {
+                let x = OwnedUri::from_str(s.as_str()).map_err(serde::de::Error::custom)?;
+                Ok(Some(x))
+            }
+        }
+    }
 }
 
 /// [Hashes](https://github.com/oasis-tcs/csaf/blob/master/csaf_2.0/prose/csaf-v2-editor-draft.md#31332-full-product-name-type---product-identification-helper---hashes)
