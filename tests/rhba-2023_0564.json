@@ -79,6 +79,17 @@
           {
             "branches": [
               {
+                "category": "product_version",
+                "name": "eap7-resteasy-0:3.15.8-1.Final_redhat_00001.1.el8eap.src",
+                "product": {
+                  "name": "eap7-resteasy-0:3.15.8-1.Final_redhat_00001.1.el8eap.src",
+                  "product_id": "eap7-resteasy-0:3.15.8-1.Final_redhat_00001.1.el8eap.src",
+                  "product_identification_helper": {
+                    "purl": "pkg:rpm/redhat/eap7-resteasy@3.15.8-1.Final_redhat_00001.1.el8eap?arch=src"
+                  }
+                }
+              },
+              {
                 "category": "product_name",
                 "name": "Red Hat OpenShift Container Platform 4.11",
                 "product": {
