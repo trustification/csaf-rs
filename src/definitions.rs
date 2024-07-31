@@ -86,7 +86,7 @@ pub struct FullProductName {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct ProductIdentificationHelper {
-    #[serde(with = "custom_cpe_format")]
+    #[serde(default, with = "custom_cpe_format")]
     pub cpe: Option<cpe::uri::OwnedUri>,
     pub hashes: Option<Vec<HashCollection>>,
     pub model_numbers: Option<Vec<String>>, // TODO: No empty strings, enforce unique
@@ -120,7 +120,8 @@ mod custom_cpe_format {
     where
         D: Deserializer<'de>,
     {
-        match Option::<String>::deserialize(deserializer)? {
+        let result = Option::<String>::deserialize(deserializer);
+        match result? {
             None => Ok(None),
             Some(s) => {
                 let x = OwnedUri::from_str(s.as_str()).map_err(serde::de::Error::custom)?;
