@@ -102,4 +102,39 @@ mod tests {
         let document: Csaf = serde_json_round_trip(example);
         println!("{:#?}", document);
     }
+
+    #[test]
+    fn cvss_example_deserializes() {
+        let example = include_str!("../tests/ssa-054046.json");
+        let document: Csaf = serde_json::from_str(example).expect("Failed to deserialize JSON");
+
+        // Check vulnerabilities
+        let vulns = document
+            .vulnerabilities
+            .as_ref()
+            .expect("Expected vulnerabilities to be present");
+        assert_eq!(vulns.len(), 1, "Expected exactly one vulnerability");
+
+        // Check scores
+        let scores = vulns[0]
+            .scores
+            .as_ref()
+            .expect("Expected scores to be present");
+        assert_eq!(scores.len(), 1, "Expected exactly one score");
+
+        // Check CVSS score
+        let cvss_scores = &scores[0].cvss_scores;
+        assert_eq!(cvss_scores.len(), 1, "Expected exactly one CVSS score");
+
+        // Verify baseSeverity
+        assert_eq!(
+            cvss_scores[0]
+                .raw
+                .get("baseSeverity")
+                .and_then(|v| v.as_str())
+                .expect("Expected baseSeverity to be present"),
+            "MEDIUM",
+            "Expected CVSS score baseSeverity to be MEDIUM"
+        );
+    }
 }
