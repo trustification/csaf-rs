@@ -189,8 +189,7 @@ pub mod rustsec {
                                     println!("INVALID Product ID");
                                     vec![ProductIdT("INVALID".to_string())]
                                 }),
-                            cvss_v2: None,
-                            cvss_v3: Some(b),
+                            cvss_scores: vec![b.into()],
                         }]
                     }),
                     threats: None,
