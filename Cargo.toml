@@ -17,7 +17,6 @@ repository = "https://github.com/voteblake/csaf-rs"
 serde = { version = "1", features = ["derive"] }
 url = { version = "2", features = ["serde"] }
 chrono = { version = "0.4", features = ["serde"] }
-cvss = { version = "2", features = ["serde"] }
 serde_json = "1"
 serde_with = "3"
 packageurl = "0.3"
@@ -35,3 +34,6 @@ rustsec-interop = ["rustsec", "crates-index"]
 
 [dev-dependencies]
 serde_json = "1"
+cvss = { package = "cvss-rs", version = "0.1.0" }
+anyhow = "1"
+walkdir = "2"

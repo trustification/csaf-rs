@@ -38,6 +38,7 @@ pub struct Csaf {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cvss;
 
     #[test]
     fn generic_template_deserializes() {
@@ -101,5 +102,55 @@ mod tests {
         let example = include_str!("../tests/rhba-2023_0564.json");
         let document: Csaf = serde_json_round_trip(example);
         println!("{:#?}", document);
+    }
+
+    #[test]
+    fn fourth_example_deserializes() {
+        let example = include_str!("../tests/ssa-054046.json");
+        let document: Csaf = serde_json_round_trip(example);
+        println!("{:#?}", document);
+    }
+
+    #[test]
+    fn cvss_example_deserializes() {
+        let example = include_str!("../tests/ssa-054046.json");
+        let document: Csaf = serde_json::from_str(example).expect("Failed to deserialize JSON");
+
+        // Check vulnerabilities
+        let vulns = document
+            .vulnerabilities
+            .as_ref()
+            .expect("Expected vulnerabilities to be present");
+        assert_eq!(vulns.len(), 1, "Expected exactly one vulnerability");
+
+        // Check scores
+        let scores = vulns[0]
+            .scores
+            .as_ref()
+            .expect("Expected scores to be present");
+        assert_eq!(scores.len(), 1, "Expected exactly one score");
+
+        // Check CVSS score
+        let cvss_v3 = scores[0]
+            .cvss_v3
+            .as_ref()
+            .expect("Expected cvss_v3 to be present");
+
+        let cvss: cvss::Cvss =
+            serde_json::from_value(cvss_v3.clone()).expect("Failed to parse CVSS");
+
+        // Verify baseSeverity
+        assert_eq!(
+            cvss.base_severity(),
+            Some(cvss::Severity::Medium),
+            "Expected CVSS score baseSeverity to be MEDIUM"
+        );
+
+        // Verify baseSeverity
+        assert_eq!(
+            cvss.base_score(),
+            5.3,
+            "Expected CVSS score baseScore to be 5.3"
+        );
     }
 }
