@@ -190,7 +190,7 @@ pub mod rustsec {
                                     vec![ProductIdT("INVALID".to_string())]
                                 }),
                             cvss_v2: None,
-                            cvss_v3: Some(b),
+                            cvss_v3: Some(serde_json::to_value(b).unwrap()),
                         }]
                     }),
                     threats: None,
