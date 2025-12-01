@@ -321,6 +321,7 @@ pub mod rustsec {
                         PackageUrl::new("cargo", package.to_string())
                             .unwrap()
                             .with_version(version.to_string())
+                            .unwrap()
                             .to_owned(),
                     ),
                     sbom_urls: None,

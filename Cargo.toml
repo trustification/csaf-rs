@@ -19,7 +19,7 @@ url = { version = "2", features = ["serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 serde_json = "1"
 serde_with = "3"
-packageurl = "0.3"
+packageurl = "0.6"
 cpe = "0.1.2"
 tempfile = "3"
 
